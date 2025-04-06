@@ -17,7 +17,7 @@ export default function SplashScreen() {
       className="d-flex flex-column justify-content-center align-items-center vh-100 bg-light"
     >
       <Image
-        src="src/assets/IMAGENS/FAVICON/bebe.png"
+        src="./IMAGENS/FAVICON/bebe.png"
         alt="Logo PromoBaby"
         className="splash-logo"
         width={120}

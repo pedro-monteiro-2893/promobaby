@@ -1,5 +1,10 @@
 import React from 'react'
 import { Container, Row, Col, Image } from 'react-bootstrap'
+// Cabecalho.jsx
+import logoBebe from '/public/IMAGENS/FAVICON/bebe.png'; // ajuste o caminho conforme a estrutura
+
+<Image src={logoBebe} alt="Logo PromoBaby" width={50} height={50} />
+
 
 export default function Cabecalho() {
   return (
@@ -7,7 +12,7 @@ export default function Cabecalho() {
       <Row className="align-items-center">
         <Col xs="auto">
           <Image
-            src="../assets/IMAGENS/FAVICON/bebe.png"
+            src={logoBebe}
             alt="Logo PromoBaby"
             width={50}
             height={50}
