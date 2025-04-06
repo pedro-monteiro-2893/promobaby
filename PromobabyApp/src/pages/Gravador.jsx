@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react'
 import { Button, Card } from 'react-bootstrap'
 import { transcreverAudio } from '../Utils/whisperAuth'
+import { obterRespostaChatGPT } from '../Utils/ChatAi'
 
 export default function GravadorAudio() {
   const [gravando, setGravando] = useState(false)
@@ -9,6 +10,8 @@ export default function GravadorAudio() {
   const [nomeArquivo, setNomeArquivo] = useState(null)
   const [arquivoAudio, setArquivoAudio] = useState(null)
   const [transcricao, setTranscricao] = useState(null)
+  const [resposta, setResposta] = useState(null);
+  const [carregando, setCarregando] = useState(false);
 
   const mediaRecorderRef = useRef(null)
   const audioChunks = useRef([])
@@ -68,6 +71,19 @@ export default function GravadorAudio() {
     return `${min}:${sec}`
   }
 
+  const enviarParaChatGPT = async () => {
+    try {
+      setCarregando(true);
+      const respostaGPT = await obterRespostaChatGPT(transcricao);
+      setResposta(respostaGPT);
+    } catch (err) {
+      alert("Erro ao obter resposta do ChatGPT");
+      console.error(err);
+    } finally {
+      setCarregando(false);
+    }
+  };
+
   return (
     <Card className="mb-3 shadow-sm rounded-4">
       <Card.Body>
@@ -94,13 +110,33 @@ export default function GravadorAudio() {
             </div>
 
             {transcricao && (
-              <Card className="mt-3 p-3 bg-light">
-                <h6 className="fw-bold">📝 Transcrição</h6>
-                <p>{transcricao}</p>
-              </Card>
-            )}
+                <div>
+                <Card className="mt-3 p-3 bg-light rounded-4 shadow-sm">
+                  <h6 className="fw-bold">📝 Transcrição</h6>
+                  <p>{transcricao}</p>
+                </Card>
+                <Button
+                  variant="success"
+                  className="mt-2"
+                  onClick={enviarParaChatGPT}
+                  disabled={carregando}
+                >
+                  {carregando ? "Enviando..." : "🤖 Enviar para ChatGPT"}
+                </Button>
+              </div>
+        
+        )
+            }
           </div>
         )}
+
+        {resposta && (
+        <Card className="mt-3 p-3 bg-white rounded-4 shadow-sm">
+          <h6 className="fw-bold">💡 Resposta do ChatGPT</h6>
+          <p>{resposta}</p>
+        </Card>
+      )}
+
       </Card.Body>
     </Card>
   )

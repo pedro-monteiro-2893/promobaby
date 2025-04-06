@@ -1,7 +1,7 @@
+import { setSenhaParaChave as setWhisperSenha } from "../Utils/whisperAuth";
+import { setSenhaChat } from "../Utils/ChatAi";
 import { useState } from "react";
 import { Button, Card, Form } from "react-bootstrap";
-import { setSenhaParaChave } from "../Utils/whisperAuth";
-
 
 export default function SenhaApiCard({ onSenhaValida }) {
   const [senha, setSenha] = useState("");
@@ -13,11 +13,13 @@ export default function SenhaApiCard({ onSenhaValida }) {
   };
 
   const handleEntrar = () => {
-    const sucesso = setSenhaParaChave(senha);
-    if (sucesso) {
-      onSenhaValida(); // Redireciona ou executa ação no componente pai
+    const sucessoWhisper = setWhisperSenha(senha);
+    const sucessoChat = setSenhaChat(senha);
+
+    if (sucessoWhisper && sucessoChat) {
+      onSenhaValida(); // Tudo ok, prossegue
     } else {
-      setErro(true); // Mostra erro se a senha estiver errada
+      setErro(true); // Falha na senha
     }
   };
 
