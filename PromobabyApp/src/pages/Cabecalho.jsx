@@ -7,7 +7,7 @@ export default function Cabecalho() {
       <Row className="align-items-center">
         <Col xs="auto">
           <Image
-            src="src\assets\IMAGENS\FAVICON\bebe.png"
+            src="../assets/IMAGENS/FAVICON/bebe.png"
             alt="Logo PromoBaby"
             width={50}
             height={50}
