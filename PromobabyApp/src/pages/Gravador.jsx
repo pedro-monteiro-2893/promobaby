@@ -7,6 +7,8 @@ export default function GravadorAudio() {
   const [audioUrl, setAudioUrl] = useState(null)
   const [duracao, setDuracao] = useState(0)
   const [nomeArquivo, setNomeArquivo] = useState(null)
+  const [arquivoAudio, setArquivoAudio] = useState(null)
+  const [transcricao, setTranscricao] = useState(null)
 
   const mediaRecorderRef = useRef(null)
   const audioChunks = useRef([])
@@ -20,35 +22,25 @@ export default function GravadorAudio() {
       audioChunks.current = []
       startTimeRef.current = Date.now()
       setGravando(true)
+      setTranscricao(null) // limpa transcrição anterior
     }
 
     mediaRecorder.ondataavailable = (e) => {
       audioChunks.current.push(e.data)
     }
 
-    mediaRecorder.onstop = async () => {
-        const blob = new Blob(audioChunks.current, { type: 'audio/webm' })
-        const url = URL.createObjectURL(blob)
-        const nome = `gravacao-${Date.now()}.webm`
-        setAudioUrl(url)
-        setNomeArquivo(nome)
-      
-        const duracaoSeg = Math.floor((Date.now() - startTimeRef.current) / 1000)
-        setDuracao(duracaoSeg)
-        setGravando(false)
-      
-        // Transcrição aqui 👇
-        const file = new File([blob], nome, { type: 'audio/webm' })
-        try {
-          const texto = await transcreverAudio(file)
-          alert(`Transcrição: ${texto}`)
-          // Ou setTranscricao(texto) para mostrar na tela
-        } catch (err) {
-          alert("Erro na transcrição")
-          console.error(err)
-        }
-      }
-      
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(audioChunks.current, { type: 'audio/webm' })
+      const url = URL.createObjectURL(blob)
+      const nome = `gravacao-${Date.now()}.webm`
+      const file = new File([blob], nome, { type: 'audio/webm' })
+
+      setAudioUrl(url)
+      setNomeArquivo(nome)
+      setDuracao(Math.floor((Date.now() - startTimeRef.current) / 1000))
+      setArquivoAudio(file)
+      setGravando(false)
+    }
 
     mediaRecorderRef.current = mediaRecorder
     mediaRecorder.start()
@@ -58,6 +50,18 @@ export default function GravadorAudio() {
     mediaRecorderRef.current.stop()
   }
 
+  const enviarParaTranscricao = async () => {
+    if (!arquivoAudio) return
+
+    try {
+      const texto = await transcreverAudio(arquivoAudio)
+      setTranscricao(texto)
+    } catch (err) {
+      alert("Erro na transcrição")
+      console.error(err)
+    }
+  }
+
   const formatarDuracao = (segundos) => {
     const min = Math.floor(segundos / 60).toString().padStart(2, '0')
     const sec = (segundos % 60).toString().padStart(2, '0')
@@ -65,28 +69,39 @@ export default function GravadorAudio() {
   }
 
   return (
-    <>
-      <Card className="mb-3 shadow-sm rounded-4">
-        <Card.Body>
-          <h6 className="fw-bold">🎤 Gravação de Áudio</h6>
+    <Card className="mb-3 shadow-sm rounded-4">
+      <Card.Body>
+        <h6 className="fw-bold">🎤 Gravação de Áudio</h6>
 
-          <Button
-            variant={gravando ? 'secondary' : 'danger'}
-            onClick={gravando ? pararGravacao : iniciarGravacao}
-            className="mb-3"
-          >
-            {gravando ? '⏹️ Parar Gravação' : '🎙️ Iniciar Gravação'}
-          </Button>
+        <Button
+          variant={gravando ? 'secondary' : 'danger'}
+          onClick={gravando ? pararGravacao : iniciarGravacao}
+          className="mb-3"
+        >
+          {gravando ? '⏹️ Parar Gravação' : '🎙️ Iniciar Gravação'}
+        </Button>
 
-          {audioUrl && (
+        {audioUrl && (
+          <div>
+            <p className="mb-1 text-muted">{nomeArquivo}</p>
+            <p className="mb-1 text-secondary">Duração: {formatarDuracao(duracao)}</p>
+            <audio controls src={audioUrl} className="mb-2" />
+
             <div>
-              <p className="mb-1 text-muted">{nomeArquivo}</p>
-              <p className="mb-1 text-secondary">Duração: {formatarDuracao(duracao)}</p>
-              <audio controls src={audioUrl} />
+              <Button variant="primary" onClick={enviarParaTranscricao}>
+                📤 Transcrever Áudio
+              </Button>
             </div>
-          )}
-        </Card.Body>
-      </Card>
-    </>
+
+            {transcricao && (
+              <Card className="mt-3 p-3 bg-light">
+                <h6 className="fw-bold">📝 Transcrição</h6>
+                <p>{transcricao}</p>
+              </Card>
+            )}
+          </div>
+        )}
+      </Card.Body>
+    </Card>
   )
 }

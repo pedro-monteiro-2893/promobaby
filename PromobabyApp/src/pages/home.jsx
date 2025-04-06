@@ -6,6 +6,7 @@ import GravadorAudio from './Gravador'
 export default function Home() {
   const [link, setLink] = useState('')
   const [image, setImage] = useState(null)
+  const [senha, setSenha] = useState('')
 
   const handleLinkChange = (e) => setLink(e.target.value)
 
@@ -18,12 +19,15 @@ export default function Home() {
     }
   }
 
-  const handleRecordAudio = () => {
-    alert('Gravação iniciada (ainda não implementada)')
-  }
+  const handlePassword = (e) => {
+    const valor = e.target.value;
+    setSenha(valor);
+    onSenhaChange(valor); 
+  };
 
   return (
     <Container fluid className="min-vh-100 d-flex flex-column justify-content-between p-3 bg-light">
+
       {/* Card do Link */}
       <Card className="mb-3 shadow-sm rounded-4">
         <Card.Body>
