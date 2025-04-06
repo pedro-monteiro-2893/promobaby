@@ -3,7 +3,7 @@ import { Button, Card } from 'react-bootstrap'
 import { transcreverAudio } from '../Utils/whisperAuth'
 import { obterRespostaChatGPT } from '../Utils/ChatAi'
 
-export default function GravadorAudio() {
+export default function GravadorAudio({link}) {
   const [gravando, setGravando] = useState(false)
   const [audioUrl, setAudioUrl] = useState(null)
   const [duracao, setDuracao] = useState(0)
@@ -13,9 +13,11 @@ export default function GravadorAudio() {
   const [resposta, setResposta] = useState(null);
   const [carregando, setCarregando] = useState(false);
 
+
   const mediaRecorderRef = useRef(null)
   const audioChunks = useRef([])
   const startTimeRef = useRef(null)
+
 
   const iniciarGravacao = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
@@ -72,9 +74,11 @@ export default function GravadorAudio() {
   }
 
   const enviarParaChatGPT = async () => {
-    try {
-      setCarregando(true);
-      const respostaGPT = await obterRespostaChatGPT(transcricao);
+      try {
+          setCarregando(true);
+          const promptFinal = `${transcricao}\n\nLink relacionado: ${link}`;
+          const respostaGPT = await obterRespostaChatGPT(promptFinal);
+          console.log(promptFinal)
       setResposta(respostaGPT);
     } catch (err) {
       alert("Erro ao obter resposta do ChatGPT");

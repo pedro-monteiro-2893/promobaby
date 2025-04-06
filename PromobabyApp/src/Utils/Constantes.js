@@ -1,0 +1,3 @@
+export const TEXTO_BASE_LINK = "Crie um texto claro e direto divido por topicos destacando nome do produto, preço e condições promocionais se houver. Ao final, inclua o link para que a pessoa possa clicar e comprar."
+export const ACESSE_LINK = "Antes de tudo acesse este link e veja as informações do produto que está sendo vendido: "
+export const PADRAO_MENSAGEM_PAGUE_MENOS = "Siga esse padrão de divulgação -> 🔥PAGUE MENOS + 40% OFF NA 2° UNIDADE!🔥Roupa Íntima Plenitud Plus Incontinência com 24 UnidadesDE R$99,99 POR APENAS R$ 79,99💥 cada:"

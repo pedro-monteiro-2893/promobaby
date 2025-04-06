@@ -2,11 +2,15 @@ import React, { useState } from 'react'
 import { Container, Form, Button, Card } from 'react-bootstrap'
 import Gravacao from './Gravacao'
 import GravadorAudio from './Gravador'
+import { ACESSE_LINK, PADRAO_MENSAGEM_PAGUE_MENOS, TEXTO_BASE_LINK } from '../Utils/Constantes'
+import { obterRespostaChatGPT } from '../Utils/ChatAi'
 
 export default function Home() {
   const [link, setLink] = useState('')
   const [image, setImage] = useState(null)
-  const [senha, setSenha] = useState('')
+  const [resposta, setResposta] = useState(null);
+  const [carregando, setCarregando] = useState(false);
+
 
   const handleLinkChange = (e) => setLink(e.target.value)
 
@@ -19,11 +23,19 @@ export default function Home() {
     }
   }
 
-  const handlePassword = (e) => {
-    const valor = e.target.value;
-    setSenha(valor);
-    onSenhaChange(valor); 
-  };
+  const enviarParaChatGPT = async () => {
+        try {
+            setCarregando(true);
+            const promptFinal = `${ACESSE_LINK} ${link}\n\n ${TEXTO_BASE_LINK}`;
+            const respostaGPT = await obterRespostaChatGPT(promptFinal);
+        setResposta(respostaGPT);
+      } catch (err) {
+        alert("Erro ao obter resposta do ChatGPT");
+        console.error(err);
+      } finally {
+        setCarregando(false);
+      }
+    };
 
   return (
     <Container fluid className="min-vh-100 d-flex flex-column justify-content-between p-3 bg-light">
@@ -40,7 +52,38 @@ export default function Home() {
               onChange={handleLinkChange}
             />
           </Form.Group>
+
+          <Button
+            variant="success"
+            className="mt-2"
+            onClick={enviarParaChatGPT}
+            disabled={carregando}
+          >
+            {carregando ? "Enviando..." : "🤖 Mensagem Padrão"}
+          </Button>
         </Card.Body>
+
+        {resposta && 
+         <div>
+                <Card className="mt-3 p-3 bg-white rounded-4 shadow-sm">
+                  <h6 className="fw-bold">💡 Resposta do ChatGPT</h6>
+                  <p>{resposta}</p>
+                </Card>
+
+            <Button
+              className="mt-2"
+              variant="success"
+              onClick={() => {
+                const numero = "5583996650645"; // Substitua pelo número desejado
+                const mensagem = encodeURIComponent(resposta);
+                window.open(`https://wa.me/${numero}?text=${mensagem}`, "_blank");
+              }}
+            >
+              📲 Enviar via WhatsApp
+            </Button>
+              </div>
+              }
+
       </Card>
 
       {/* Card do Upload de Imagem */}
@@ -64,7 +107,8 @@ export default function Home() {
       <div style={{ height: '80px' }}></div>
 
       {/* Botão flutuante de gravação */}
-      <GravadorAudio/>
+
+      <GravadorAudio link={link} />
     </Container>
   )
 }
