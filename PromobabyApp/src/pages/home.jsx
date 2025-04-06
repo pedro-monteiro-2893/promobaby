@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Container, Form, Button, Card } from 'react-bootstrap'
 import Gravacao from './Gravacao'
+import GravadorAudio from './Gravador'
 
 export default function Home() {
   const [link, setLink] = useState('')
@@ -55,28 +56,11 @@ export default function Home() {
           </Card.Body>
         </Card.Body>
       </Card>
-      
-      <div>
-      <Gravacao nomeArquivo="audio123.webm" duracao={12}/>
-      </div>
-
       {/* Espaço vazio pra empurrar o botão pra baixo */}
       <div style={{ height: '80px' }}></div>
 
       {/* Botão flutuante de gravação */}
-      <Button
-        variant="danger"
-        className="rounded-circle p-3 shadow-lg"
-        style={{
-          position: 'fixed',
-          bottom: '20px',
-          right: '20px',
-          zIndex: 1000,
-        }}
-        onClick={handleRecordAudio}
-      >
-        🎙️
-      </Button>
+      <GravadorAudio/>
     </Container>
   )
 }
