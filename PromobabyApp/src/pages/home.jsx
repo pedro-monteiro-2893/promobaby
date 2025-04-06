@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Container, Form, Button, Card } from 'react-bootstrap'
+import Gravacao from './Gravacao'
 
 export default function Home() {
   const [link, setLink] = useState('')
@@ -26,7 +27,7 @@ export default function Home() {
       <Card className="mb-3 shadow-sm rounded-4">
         <Card.Body>
           <Form.Group>
-            <Form.Label className="fw-bold">🔗 Link para incorporar</Form.Label>
+            <Form.Label className="fw-bold">🔗 Link para divulgação</Form.Label>
             <Form.Control
               type="text"
               placeholder="Cole o link aqui"
@@ -40,7 +41,7 @@ export default function Home() {
       {/* Card do Upload de Imagem */}
       <Card className="mb-3 shadow-sm rounded-4">
         <Card.Body>
-          <Form.Group>
+          <Form.Group className='mb-3'>
             <Form.Label className="fw-bold">🖼️ Anexar imagem (PNG ou JPEG)</Form.Label>
             <Form.Control type="file" accept="image/png, image/jpeg" onChange={handleImageUpload} />
             {image && (
@@ -49,8 +50,15 @@ export default function Home() {
               </div>
             )}
           </Form.Group>
+          <Card.Body className='shadow-sm rounded-4'>
+            <h8>Se o link não gerar imagem automaticamente, anexar aqui uma imagem que represnete o produto</h8>
+          </Card.Body>
         </Card.Body>
       </Card>
+      
+      <div>
+      <Gravacao nomeArquivo="audio123.webm" duracao={12}/>
+      </div>
 
       {/* Espaço vazio pra empurrar o botão pra baixo */}
       <div style={{ height: '80px' }}></div>
